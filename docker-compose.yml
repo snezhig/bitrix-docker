@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+  php:
+    container_name: ${COMPOSE_PROJECT_NAME}_php
+    command: [ "bash", "/tmp/php-starter.sh" ]
+    build:
+      context: images/php
+      target: ${PHP_TARGET}
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+        SET_UP_SSH_SERVER: ${SET_UP_SSH_SERVER}
+        COMPOSER_VERSION: ${COMPOSER_VERSION}
+        XDEBUG_VERSION: ${XDEBUG_VERSION}
+    volumes:
+      - ~/.ssh:/var/www/.ssh
+      - ./tmp/php_sessions:/sessions
+      - logs:/var/log
+      - project:/var/www
+    ports:
+      - "${INTERFACE}:${PHP_FPM_PORT}:9000"
+      - "${INTERFACE}:${SSH_PORT}:22"
+    links:
+      - database
+    environment:
+      XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} mode=${XDEBUG_MODE} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT} remote_enable=${XDEBUG_REMOTE_ENABLE} default_enable=${XDEBUG_REMOTE_ENABLE} remote_autostart=${XDEBUG_REMOTE_ENABLE} remote_connect_back=${XDEBUG_CONNECT_BACK}"
+
+  nginx:
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    build:
+      context: images/nginx
+      args:
+        DOMAIN: ${DOMAIN}
+        REGEXP: ${NGINX_ROOT_REGEXP}
+        CONDITION_NUMBER: ${NGINX_ROOT_CONDITION_NUMBER}
+    volumes:
+      - project:/var/www
+      - logs:/var/log
+    links:
+      - php
+    ports:
+      - "${INTERFACE}:80:80"
+      - "${INTERFACE}:443:443"
+
+  database:
+    container_name: ${COMPOSE_PROJECT_NAME}_database
+    build:
+      context: images/database
+      args:
+        DB_VERSION: ${DB_VERSION}
+        DB_TYPE: ${DB_TYPE}
+        INNODB_FLUSH_METHOD: ${DB_INNODB_FLUSH_METHOD}
+    ports:
+      - "${INTERFACE}:${DB_PORT}:3306"
+    volumes:
+      - logs:/var/log
+      - project:/var/www
+      - ${DATA_PATH}/database:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_BITRIX}
+
+  node:
+    image: node:${NODE_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_node
+    command: [ "bash", '-c', "${NODE_COMMAND}" ]
+    volumes:
+      - project:/var/www
+    ports:
+      - "${INTERFACE}:${NODE_PORT}:3001"
+    working_dir: /var/www/frontend
+
+volumes:
+  project:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PROJECT_PATH}
+  logs:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${LOGS_PATH}

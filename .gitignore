@@ -1,0 +1,6 @@
+.idea
+.env
+public/*
+logs
+data
+.bash_history
