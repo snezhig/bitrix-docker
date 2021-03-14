@@ -1,7 +1,7 @@
 # Bitrix-Docker starter
 > The simple docker compose which has some containers for install bitrix and test it
 
-> This docker using for dev, bot for production
+> This docker using for dev, not for production
 
 
 ## Table of Contents
