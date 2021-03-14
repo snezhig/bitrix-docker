@@ -6,12 +6,13 @@ services:
     command: [ "bash", "/tmp/php-starter.sh" ]
     build:
       context: images/php
-      target: ${PHP_TARGET}
       args:
         PHP_VERSION: ${PHP_VERSION}
         SET_UP_SSH_SERVER: ${SET_UP_SSH_SERVER}
+        SET_UP_MAILHOG: ${SET_UP_MAILHOG}
         COMPOSER_VERSION: ${COMPOSER_VERSION}
         XDEBUG_VERSION: ${XDEBUG_VERSION}
+        PHP_MBSTRING_FUNC_OVERLOAD: ${PHP_MBSTRING_FUNC_OVERLOAD}
     volumes:
       - ~/.ssh:/var/www/.ssh
       - ./tmp/php_sessions:/sessions
@@ -22,8 +23,16 @@ services:
       - "${INTERFACE}:${SSH_PORT}:22"
     links:
       - database
+      - mailhog
     environment:
-      XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} mode=${XDEBUG_MODE} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT} remote_enable=${XDEBUG_REMOTE_ENABLE} default_enable=${XDEBUG_REMOTE_ENABLE} remote_autostart=${XDEBUG_REMOTE_ENABLE} remote_connect_back=${XDEBUG_CONNECT_BACK}"
+      XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} client_host=${XDEBUG_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} mode=${XDEBUG_MODE} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT} remote_enable=${XDEBUG_REMOTE_ENABLE} default_enable=${XDEBUG_REMOTE_ENABLE} remote_autostart=${XDEBUG_REMOTE_ENABLE} remote_connect_back=${XDEBUG_CONNECT_BACK}"
+
+  mailhog:
+    container_name: ${COMPOSE_PROJECT_NAME}_mailhog
+    image: mailhog/mailhog
+    ports:
+      - "${INTERFACE}:${MAILHOG_SMPT_PORT}:1025" # smtp server
+      - "${INTERFACE}:${MAILHOG_WEB_PORT}:8025" # web ui
 
   nginx:
     container_name: ${COMPOSE_PROJECT_NAME}_nginx
@@ -71,6 +80,7 @@ services:
     ports:
       - "${INTERFACE}:${NODE_PORT}:3001"
     working_dir: /var/www/frontend
+
 
 volumes:
   project:

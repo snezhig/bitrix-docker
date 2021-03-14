@@ -1,15 +1,22 @@
-# Docker compose starter
-> The simple docker compose which has some containers for fast start
+# Bitrix-Docker starter
+> The simple docker compose which has some containers for install bitrix and test it
+
+> This docker using for dev, bot for production
 
 
 ## Table of Contents
 
-
+- [Features](#features)
 - [Installation](#installation)
 - [FAQ](#faq)
-- [Features](#features)
 - [Support](#support)
 - [License](#license)
+
+# Features
+* Configure php version 7.x by .env file
+* Configure xdebug version 2.x or 3.x by .env file
+* Mailhog for mail test
+* Works from box in 90%
 
 
 # Installation
@@ -38,15 +45,17 @@ chmod +x init.sh
 ```
 ~/projects/docker-compose-starter$ ./init.sh
 
-# Type the project name: docker_compose_starter
-# Type the project path: /x/projects/docker-compose-starter
-# Type the path to docker data: /x/projects/docker-compose-starter/docker/data
-# Type the log path: /x/projects/docker-compose-starter/docker/logs
-# Type database name: docker_db
-# Type database user: docker_user
-# Type database user password: docker_pass
-# Type database root password: docker_root_pass
-# Create public folder with index.php? Y
+//parent dir by default, because i prefer have docker separate from project
+# Type the project path: /home/snezhig/.dev/projects/private 
+# Type the project name: private
+# Type the domain for project: private.loc
+# Type the path to docker data: /home/snezhig/.dev/projects/private/bitrix-docker/data
+# Type the log path: /home/snezhig/.dev/projects/private/bitrix-docker/logs
+# Type database name: test
+# Type database user: test
+# Type database user password: yourStrongPassword
+# Type database root password: yourStrongPassword
+
 
 ```
 
@@ -59,32 +68,17 @@ docker-compose up --build -d
 
 ---
 
+#### Step 6
+> Install bitrix in public directory as you wish
+
 # FAQ
 * Why there is `open-ssh-server` in php container?
     * I work on Windows I couldn't connect IDE with docker-compose, namely to give access to php interpreter to run tests from IDE, so I decided to connect by ssh to do it
 
 ---
-# Features
-## .env file
-> Most of them understandable by name, but I will describe some
-* `COMPOSE_PROJECT_NAME`: used as a prefix for containers
-* `PROJECT_PATH`: path for `project` volume. Will be filled by `init.sh`
-* `LOGS_PATH`: path for `logs` volume. Will be filled by `init.sh`
-* `DATA_PATH`: path for docker data (E.g database)
-* `SET_UP_SSH_SERVER`: If it is true docker will install `ssh server` and runs it and php-frm by supervisord
-* `XDEBUG_HOST`: `host.docker.internal` works for windows
-
----
-
-# What's next
-* [ ] Complement README
-* [ ] Add variable for php extensions
-* [x] Add mysql container
-
----
 
 # Support
-> I will glad for your remarks about configuration and decor of readme 
+> I will be glad for your remarks about configuration and decor of readme 
 * <snezhig.git@gmail.com>
 ---
 
