@@ -35,10 +35,10 @@ sed -ri "s~@PATH_TO_DOCKER_DATA@~$PATH_TO_DOCKER_DATA~" .env
 read -p "Type the log path: " -i "$CURRENT_DIR/logs" -e LOGS_PATH
 sed -ri "s~@PATH_TO_LOGS@~$LOGS_PATH~" .env
 
-read -p "Type database name: " -i "test" -e DB_NAME
+read -p "Type database name: " -i "bitrix" -e DB_NAME
 sed -ri "s~@DB_NAME@~$DB_NAME~" .env
 
-read -p "Type database user: " -i "test" -e DB_USER
+read -p "Type database user: " -i "bitrix" -e DB_USER
 sed -ri "s~@DB_USER@~$DB_USER~" .env
 
 read -p "Type database user password: " -i "yourStrongPassword" -e DB_PASSWORD
