@@ -6,7 +6,6 @@ default-time-zone="+03:00"
 innodb_file_per_table=1
 innodb_flush_log_at_trx_commit=2
 sync_binlog=0
-innodb_flush_method=@INNODB_FLUSH_METHOD@
 transaction-isolation=READ-COMMITTED
 binlog_cache_size=0
 sql_mode=""
@@ -15,12 +14,13 @@ ignore-db-dir=lost+found
 sort_buffer_size=4M
 innodb_strict_mode=OFF
 
-#handlersocket
-plugin_maturity=beta
-plugin-load=handlersocket.so
-handlersocket_address="database"
-handlersocket_port="9998"
-handlersocket_port_wr="9999"
+#[O_DIRECT|O_DSYNC|fsync|...etc] In default use "O_DIRECT", but if you use windows and have a problem, use "fsync"
+innodb_flush_method=O_DSYNC
+#innodb_buffer_pool_size=10737418240
+#innodb_buffer_pool_instances=5
+#innodb_buffer_pool_chunk_size=900
+#table_definition_cache=1024
+
 
 [client]
 default-character-set=utf8

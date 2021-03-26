@@ -58,10 +58,10 @@ services:
       args:
         DB_VERSION: ${DB_VERSION}
         DB_TYPE: ${DB_TYPE}
-        INNODB_FLUSH_METHOD: ${DB_INNODB_FLUSH_METHOD}
     ports:
       - "${INTERFACE}:${DB_PORT}:3306"
     volumes:
+      - ./images/database/conf.d/base.cnf:/etc/mysql/conf.d/base.cnf
       - logs:/var/log
       - project:/var/www
       - ${DATA_PATH}/database:/var/lib/mysql
@@ -79,7 +79,7 @@ services:
       - project:/var/www
     ports:
       - "${INTERFACE}:${NODE_PORT}:3001"
-    working_dir: /var/www/frontend
+    working_dir: /var/www
 
 
 volumes:
