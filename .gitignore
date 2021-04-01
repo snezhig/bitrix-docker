@@ -1,7 +1,10 @@
 .idea
 .env
+.bash_history
 public/*
 logs
 data
-.bash_history
 tmp
+vendor
+.composer
+local
