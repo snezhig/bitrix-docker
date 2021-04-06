@@ -19,20 +19,24 @@ services:
       - logs:/var/log
       - project:/var/www
     ports:
-      - "${INTERFACE}:${PHP_FPM_PORT}:9000"
-      - "${INTERFACE}:${SSH_PORT}:22"
+      - "${INTERFACE:-127.0.0.1}:${PHP_FPM_PORT:-9000}:9000"
+      - "${INTERFACE:-127.0.0.1}:${SSH_PORT:-2222}:22"
     links:
       - database
       - mailhog
     environment:
       XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} client_host=${XDEBUG_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} mode=${XDEBUG_MODE} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT} remote_enable=${XDEBUG_REMOTE_ENABLE} default_enable=${XDEBUG_REMOTE_ENABLE} remote_autostart=${XDEBUG_REMOTE_ENABLE} remote_connect_back=${XDEBUG_CONNECT_BACK}"
+    networks:
+      - app-network
 
   mailhog:
     container_name: ${COMPOSE_PROJECT_NAME}_mailhog
     image: mailhog/mailhog
     ports:
-      - "${INTERFACE}:${MAILHOG_SMPT_PORT}:1025" # smtp server
-      - "${INTERFACE}:${MAILHOG_WEB_PORT}:8025" # web ui
+      - "${INTERFACE:-127.0.0.1}:${MAILHOG_SMPT_PORT:-1025}:1025" # smtp server
+      - "${INTERFACE:-127.0.0.1}:${MAILHOG_WEB_PORT:-1025}:8025" # web ui
+    networks:
+      - app-network
 
   nginx:
     container_name: ${COMPOSE_PROJECT_NAME}_nginx
@@ -48,8 +52,10 @@ services:
     links:
       - php
     ports:
-      - "${INTERFACE}:80:80"
-      - "${INTERFACE}:443:443"
+      - "${INTERFACE:-127.0.0.1}:80:80"
+      - "${INTERFACE:-127.0.0.1}:443:443"
+    networks:
+      - app-network
 
   database:
     container_name: ${COMPOSE_PROJECT_NAME}_database
@@ -59,7 +65,9 @@ services:
         DB_VERSION: ${DB_VERSION}
         DB_TYPE: ${DB_TYPE}
     ports:
-      - "${INTERFACE}:${DB_PORT}:3306"
+      - "${INTERFACE:-127.0.0.1}:${DB_PORT:-3306}:3306"
+    networks:
+      - app-network
     volumes:
       - ./images/database/conf.d/base.cnf:/etc/mysql/conf.d/base.cnf
       - logs:/var/log
@@ -78,9 +86,12 @@ services:
     volumes:
       - project:/var/www
     ports:
-      - "${INTERFACE}:${NODE_PORT}:3001"
+      - "${INTERFACE:-127.0.0.1}:${NODE_PORT-3001}:3001"
     working_dir: /var/www
 
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   project:

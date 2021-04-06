@@ -1,0 +1,34 @@
+{
+  "name": "snezhig/bitrix.trial.catalog.module",
+  "description": "Простой модуль для демонстрации кода",
+  "homepage": "https://gitl.notamedia.ru/tools/nota.tools.logging",
+  "type": "bitrix-module",
+  "license": "MIT",
+  "keywords": [
+    "bitrix",
+    "ытуяршп",
+    "trial",
+    "test"
+  ],
+  "authors": [
+    {
+      "name": "Maxim Strekalov",
+      "email": "snezhig.git@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "XS\\BX\\Trial\\Catalog\\": "local/modules/xs.trial.catalog/lib",
+      "XS\\BX\\Trial\\Catalog\\Install\\": "local/modules/xs.trial.catalog/install"
+    }
+  },
+  "require": {
+    "php": "7.*",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "kint-php/kint": "^3.2.2"
+  },
+  "minimum-stability": "stable"
+}

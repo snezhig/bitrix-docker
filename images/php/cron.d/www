@@ -1,0 +1,1 @@
+# */1 * * * * www-data /usr/local/bin/php  -f @path_to_bitrix@/bitrix/modules/main/tools/cron_events.php >> /var/log/php/cron.log 2>&1
