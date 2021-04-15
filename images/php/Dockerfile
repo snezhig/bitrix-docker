@@ -8,24 +8,35 @@ WORKDIR /var/www
 ####################BASE INSTALL####################
 ARG COMPOSER_VERSION=1.10.16
 
-RUN apt-get update && apt-get install -y curl wget openssh-client git libgd-dev libfreetype6 libmcrypt-dev && \
+RUN apt-get update && apt-get install -y curl wget openssh-client git libzip-dev libgd-dev libfreetype6 libmcrypt-dev zip && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer --version="${COMPOSER_VERSION}" && \
-    docker-php-ext-install mysqli -j$(nproc) gd calendar mbstring opcache && \
-    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+    docker-php-ext-install mysqli -j$(nproc) calendar opcache && \
     docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install gd && docker-php-ext-install sockets
-
-RUN if [ "${PHP_VERSION%.*}" \< "7.3" ];then docker-php-ext-install -j$(nproc) zip; fi
+    docker-php-ext-install sockets
 
 ARG XDEBUG_VERSION=3.0.0
 ARG XDG_PACKAGE="xdebug-${XDEBUG_VERSION}"
 
-RUN pecl install ${XDG_PACKAGE} mcrypt \
-    && if [ "${PHP_VERSION%.*}" \> "7.2" ];\
-    then apt-get update && apt-get install -y libzip-dev && docker-php-ext-install zip;\
+RUN pecl install ${XDG_PACKAGE} mcrypt
+
+###############region conditions for php version###############
+##7.2 or lower
+RUN if [ "${PHP_VERSION%.*}" \< "7.3" ];then \
+    docker-php-ext-configure zip --with-libzip; \
+    fi
+##7.3 or lower
+RUN if [ "${PHP_VERSION%.*}" \< "7.4" ];then \
+    docker-php-ext-install -j$(nproc) mbstring && \
+    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; \
+    fi
+##only 7.4
+RUN if [ "${PHP_VERSION%.*}" = "7.4" ];then \
+    docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/; \
     fi
 
+###############endregion###############
 
+RUN docker-php-ext-install zip gd
 
 COPY php.ini                       $PHP_INI_DIR/php.ini
 COPY php-fpm.d                     $PHP_INI_DIR/pool.d/
