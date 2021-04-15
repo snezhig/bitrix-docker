@@ -46,6 +46,9 @@ COPY php-starter.sh /tmp/
 ARG PHP_MBSTRING_FUNC_OVERLOAD=2
 RUN sed -ri 's/@mbstring_func_overload@/'$PHP_MBSTRING_FUNC_OVERLOAD'/' $PHP_INI_DIR/php.ini
 
+ARG XDEBUG_MODE='debug'
+RUN echo "xdebug.mode=$XDEBUG_MODE" >>  $PHP_INI_DIR/conf.d/99-xdebug.ini
+
 ###############region SSH###############
 ARG SET_UP_SSH_SERVER=N
 ENV SET_UP_SSH_SERVER $SET_UP_SSH_SERVER
