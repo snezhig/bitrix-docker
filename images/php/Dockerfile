@@ -1,7 +1,7 @@
 ARG PHP_VERSION=7.2
 FROM php:${PHP_VERSION}-fpm
 
-MAINTAINER snezhig
+LABEL maintainer="snezhig.git@gmail.com"
 
 WORKDIR /var/www
 

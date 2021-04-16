@@ -1,4 +1,4 @@
-`# Bitrix-Docker starter
+# Bitrix-Docker starter
 
 > The simple docker compose which has some containers for install bitrix and test it
 
@@ -8,7 +8,6 @@
 
 - [Features](#features)
 - [Installation](#installation)
-- [FAQ](#faq)
 - [Support](#support)
 - [License](#license)
 
@@ -17,7 +16,7 @@
 * Configure php version 7.x by .env file
 * Configure xdebug version 2.x or 3.x by .env file
 * Mailhog for mail test
-* Cron enabled
+* Cron is enabled
 * Works from box in 90%
 
 # Installation
