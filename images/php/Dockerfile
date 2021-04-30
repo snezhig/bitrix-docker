@@ -6,18 +6,21 @@ LABEL maintainer="snezhig.git@gmail.com"
 WORKDIR /var/www
 
 ####################BASE INSTALL####################
-ARG COMPOSER_VERSION=1.10.16
+ARG COMPOSER_VERSION=''
 
-RUN apt-get update && apt-get install -y curl wget openssh-client git libzip-dev libgd-dev libfreetype6 libmcrypt-dev zip && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer --version="${COMPOSER_VERSION}" && \
-    docker-php-ext-install mysqli -j$(nproc) calendar opcache && \
+RUN apt-get update && apt-get install -y curl wget openssh-client git libzip-dev libgd-dev libfreetype6 libmcrypt-dev zip
+
+RUN if [ -n "${COMPOSER_VERSION}" ]; then COMPOSER_VERSION="--version=${COMPOSER_VERSION}";fi;\
+ curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer ${COMPOSER_VERSION}
+
+RUN docker-php-ext-install mysqli -j$(nproc) calendar opcache && \
     docker-php-ext-configure opcache --enable-opcache && \
     docker-php-ext-install sockets
 
 ARG XDEBUG_VERSION=3.0.0
 ARG XDG_PACKAGE="xdebug-${XDEBUG_VERSION}"
 
-RUN pecl install ${XDG_PACKAGE} mcrypt
+RUN pecl install ${XDG_PACKAGE%-} mcrypt
 
 ###############region conditions for php version###############
 ##7.2 or lower
@@ -74,10 +77,22 @@ RUN if [ "$SET_UP_MAILHOG" = "Y" ]; \
     fi
 ###############endregion###############
 
+
+###############region memcache###############
+ARG SET_UP_MEMCACHE=Y
+ARG MEMCACHE_VERSION=''
+ARG MEMCACHE_PACKAGE="memcache-${MEMCACHE_VERSION}"
+RUN if [ "$SET_UP_MEMCACHE" = "Y" ]; \
+    then pecl install  "${MEMCACHE_PACKAGE%-}" && echo "extension=memcache.so" > /usr/local/etc/php/conf.d/ext-memcache.ini; \
+    fi
+###############endregion###############
+
 ###############region cron###############
 COPY cron.d /etc/cron.d
 RUN apt install -y cron && chmod 644 /etc/cron.d/www && crontab /etc/crontab && rm -rf /var/lib/apt/lists/*
 ###############endregion###############
 
-RUN usermod -u 1000 -a -G www-data www-data
+ARG USER_ID
+ARG GROUP
+RUN usermod -u "$USER_ID" -a -G "$GROUP" www-data
 EXPOSE 9000 22

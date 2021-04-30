@@ -14,12 +14,17 @@ ignore-db-dir=lost+found
 sort_buffer_size=4M
 innodb_strict_mode=OFF
 
-#[O_DIRECT|O_DSYNC|fsync|...etc] In default use "O_DIRECT", but if you use windows and have a problem, use "fsync"
+#[O_DIRECT|O_DSYNC|fsync|...etc]
 innodb_flush_method=O_DSYNC
-#innodb_buffer_pool_size=10737418240
+innodb_buffer_pool_size=4G
 #innodb_buffer_pool_instances=5
 #innodb_buffer_pool_chunk_size=900
-#table_definition_cache=1024
+table_definition_cache=1348
+join_buffer_size=512M
+max_heap_table_size=32M
+tmp_table_size=32M
+innodb_log_file_size=500M
+performance_schema=ON
 
 
 [client]

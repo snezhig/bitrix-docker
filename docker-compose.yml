@@ -14,6 +14,10 @@ services:
         XDEBUG_VERSION: ${XDEBUG_VERSION}
         XDEBUG_MODE: ${XDEBUG_MODE:-debug}
         PHP_MBSTRING_FUNC_OVERLOAD: ${PHP_MBSTRING_FUNC_OVERLOAD}
+        SET_UP_MEMCACHE: ${SET_UP_MEMCACHE}
+        MEMCACHE_VERSION: ${MEMCACHE_VERSION}
+        USER_ID: ${USER_ID:-1000}
+        GROUP: ${GROUP:-www-data}
     volumes:
       - ~/.ssh:/var/www/.ssh
       - ./tmp/php_sessions:/sessions
@@ -79,16 +83,6 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_BITRIX}
-
-  node:
-    image: node:${NODE_VERSION}
-    container_name: ${COMPOSE_PROJECT_NAME}_node
-    command: [ "bash", '-c', "${NODE_COMMAND}" ]
-    volumes:
-      - project:/var/www
-    ports:
-      - "${INTERFACE:-127.0.0.1}:${NODE_PORT-3001}:3001"
-    working_dir: /var/www
 
 networks:
   app-network:
