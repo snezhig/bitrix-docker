@@ -14,7 +14,7 @@ RUN sed -ri "s/@NGINX_ROOT_REGEXP@/$REGEXP/" /etc/nginx/sites-available/default.
 RUN sed -ri "s~@NGINX_ROOT_CONDITION_NUMBER@~$CONDITION_NUMBER~" /etc/nginx/sites-available/default.conf
 
 RUN usermod -u 1000 www-data
-
+RUN openssl req -x509 -nodes -days 365 -subj "/C=CA/ST=QC/O=Company, Inc./CN=$DOMAIN" -addext "subjectAltName=DNS:$DOMAIN" -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt;
 CMD ["nginx"]
 
 EXPOSE 80 443
