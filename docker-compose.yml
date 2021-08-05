@@ -8,13 +8,13 @@ services:
       context: images/php
       args:
         PHP_VERSION: ${PHP_VERSION}
-        SET_UP_SSH_SERVER: ${SET_UP_SSH_SERVER}
-        SET_UP_MAILHOG: ${SET_UP_MAILHOG}
+        SET_UP_SSH_SERVER: "${SET_UP_SSH_SERVER}"
+        SET_UP_MAILHOG: "${SET_UP_MAILHOG}"
         COMPOSER_VERSION: ${COMPOSER_VERSION}
         XDEBUG_VERSION: ${XDEBUG_VERSION}
         XDEBUG_MODE: ${XDEBUG_MODE:-debug}
         PHP_MBSTRING_FUNC_OVERLOAD: ${PHP_MBSTRING_FUNC_OVERLOAD}
-        SET_UP_MEMCACHE: ${SET_UP_MEMCACHE}
+        SET_UP_MEMCACHE: "${SET_UP_MEMCACHE}"
         MEMCACHE_VERSION: ${MEMCACHE_VERSION}
         USER_ID: ${USER_ID:-1000}
         GROUP: ${GROUP:-www-data}
@@ -26,9 +26,6 @@ services:
     ports:
       - "${INTERFACE:-127.0.0.1}:${PHP_FPM_PORT:-9000}:9000"
       - "${INTERFACE:-127.0.0.1}:${SSH_PORT:-2222}:22"
-    links:
-      - database
-      - mailhog
     environment:
       XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} client_host=${XDEBUG_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT} remote_enable=${XDEBUG_REMOTE_ENABLE} default_enable=${XDEBUG_REMOTE_ENABLE} remote_autostart=${XDEBUG_REMOTE_ENABLE} remote_connect_back=${XDEBUG_CONNECT_BACK}"
     networks:
@@ -54,8 +51,6 @@ services:
     volumes:
       - project:/var/www
       - logs:/var/log
-    links:
-      - php
     ports:
       - "${INTERFACE:-127.0.0.1}:80:80"
       - "${INTERFACE:-127.0.0.1}:443:443"
