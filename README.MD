@@ -14,9 +14,9 @@
 # Features
 
 * Configure php version 7.x by .env file
-* Configure xdebug version 2.x or 3.x by .env file
 * Mailhog for mail test
 * Cron is enabled
+* Download `bitrixsetup` to install bitrix
 * Works from box in 90%
 
 # Installation
@@ -44,17 +44,13 @@
 ```
 //parent dir by default, because i prefer have docker separate from project
 
-# Type the project path: /home/snezhig/.dev/projects/private 
-# Type the project name: private
-# Type the domain for project: private.loc
-# Type the path to docker data: /home/snezhig/.dev/projects/private/bitrix-docker/data
-# Type the log path: /home/snezhig/.dev/projects/private/bitrix-docker/logs
-# Type database name: test
-# Type database user: test
-# Type database user password: yourStrongPassword
-# Type database root password: yourStrongPassword
-
-
+# Type the project path: *********
+# Type the project name: *********
+# Type the domain for project: *********
+# Type the path to docker data: *********
+# Type the log path: *********
+# Download bitrix_setup.php? Y
+# File is downloaded.
 ```
 
 #### Step 5

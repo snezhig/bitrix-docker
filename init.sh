@@ -79,9 +79,9 @@ if [ ! -d "${PROJECT_PATH}/public" ]; then
   fi
 fi
 
-read -p -r 'Download bitrix_setup.php? ' -i 'Y' -e DBS
+read -r -p 'Download bitrix_setup.php? ' -i 'Y' -e DBS
 
 if [ "${DBS}" == 'Y' ]; then
-  wget "https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php" -O "${PROJECT_PATH}/public/bitrixsetup.php"
+  wget "https://www.1c-bitrix.ru/download/scripts/bitrixsetup.php" -O "${PROJECT_PATH}/public/bitrixsetup.php" -nv
   echo "File is downloaded."
 fi
