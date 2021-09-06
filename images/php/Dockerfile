@@ -8,7 +8,7 @@ WORKDIR /var/www
 ####################BASE INSTALL####################
 ARG COMPOSER_VERSION=''
 
-RUN apt-get update && apt-get install -y curl wget openssh-client git libzip-dev libgd-dev libfreetype6 libmcrypt-dev zip
+RUN apt-get update && apt-get install -y curl wget openssh-client git libzip-dev libgd-dev libfreetype6 libmcrypt-dev zip supervisor
 
 RUN if [ -n "${COMPOSER_VERSION}" ]; then COMPOSER_VERSION="--version=${COMPOSER_VERSION}";fi;\
  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer ${COMPOSER_VERSION}
@@ -17,10 +17,12 @@ RUN docker-php-ext-install mysqli -j$(nproc) calendar opcache && \
     docker-php-ext-configure opcache --enable-opcache && \
     docker-php-ext-install sockets
 
-ARG XDEBUG_VERSION=3.0.0
-ARG XDG_PACKAGE="xdebug-${XDEBUG_VERSION}"
+ARG XDEBUG_VERSION=''
+ARG XDBG_PACKAGE="xdebug"
 
-RUN pecl install ${XDG_PACKAGE%-} mcrypt
+RUN if [ -n "${XDEBUG_VERSION}" ];\
+ then XDBG_PACKAGE="${XDBG_PACKAGE}-${XDEBUG_VERSION}";fi;\
+ pecl install ${XDBG_PACKAGE} mcrypt
 
 ###############region conditions for php version###############
 ##7.2 or lower
@@ -44,7 +46,6 @@ RUN docker-php-ext-install zip gd
 COPY php.ini                       $PHP_INI_DIR/php.ini
 COPY php-fpm.d                     $PHP_INI_DIR/pool.d/
 COPY conf.d                        $PHP_INI_DIR/conf.d/
-COPY php-starter.sh /tmp/
 
 ARG PHP_MBSTRING_FUNC_OVERLOAD=2
 RUN sed -ri 's/@mbstring_func_overload@/'$PHP_MBSTRING_FUNC_OVERLOAD'/' $PHP_INI_DIR/php.ini
@@ -58,13 +59,12 @@ ENV SET_UP_SSH_SERVER $SET_UP_SSH_SERVER
 
 
 RUN if [ "$SET_UP_SSH_SERVER" = "Y" ]; \
-    then apt update && apt install -y openssh-server supervisor \
+    then apt update && apt install -y openssh-server \
     && mkdir /var/run/sshd \
     && sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config \
     && sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config \
     && echo 'root:root' | chpasswd; fi
 
-COPY supervisor.conf /etc/supervisor/conf.d/
 ###############endregion###############
 
 ###############region mailhog###############
@@ -89,10 +89,15 @@ RUN if [ "$SET_UP_MEMCACHE" = "Y" ]; \
 
 ###############region cron###############
 COPY cron.d /etc/cron.d
-RUN apt install -y cron && chmod 644 /etc/cron.d/www && crontab /etc/crontab && rm -rf /var/lib/apt/lists/*
+RUN apt --allow-releaseinfo-change update && apt install -y cron && chmod 644 /etc/cron.d/www && crontab /etc/crontab
+RUN rm -rf /var/lib/apt/lists/*
 ###############endregion###############
 
 ARG USER_ID
 ARG GROUP
 RUN usermod -u "$USER_ID" -a -G "$GROUP" www-data
+
+COPY startup /startup
+COPY supervisor.conf /etc/supervisor/conf.d/
+
 EXPOSE 9000 22

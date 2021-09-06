@@ -3,7 +3,7 @@ version: "3.8"
 services:
   php:
     container_name: ${COMPOSE_PROJECT_NAME}_php
-    command: [ "bash", "/tmp/php-starter.sh" ]
+    command: [ "supervisord", "-n" ]
     build:
       context: images/php
       args:
@@ -27,7 +27,7 @@ services:
       - "${INTERFACE:-127.0.0.1}:${PHP_FPM_PORT:-9000}:9000"
       - "${INTERFACE:-127.0.0.1}:${SSH_PORT:-2222}:22"
     environment:
-      XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} client_host=${XDEBUG_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT} remote_enable=${XDEBUG_REMOTE_ENABLE} default_enable=${XDEBUG_REMOTE_ENABLE} remote_autostart=${XDEBUG_REMOTE_ENABLE} remote_connect_back=${XDEBUG_CONNECT_BACK}"
+      XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} client_host=${XDEBUG_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT}"
     networks:
       - app-network
 
