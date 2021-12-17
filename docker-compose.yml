@@ -27,7 +27,8 @@ services:
       - "${INTERFACE:-127.0.0.1}:${PHP_FPM_PORT:-9000}:9000"
       - "${INTERFACE:-127.0.0.1}:${SSH_PORT:-2222}:22"
     environment:
-      XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} client_host=${XDEBUG_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} remote_host=${XDEBUG_HOST} remote_port=${XDEBUG_PORT}"
+      XDEBUG_CONFIG: "discover_client_host=${XDEBUG_DISCOVER_CLIENT_HOST} start_with_request=${XDEBUG_START_WITH_REQUEST} client_host=${XDEBUG_HOST} client_port=${XDEBUG_PORT}"
+      PHP_IDE_CONFIG: "serverName=${SERVER_NAME}"
     networks:
       - app-network
 
